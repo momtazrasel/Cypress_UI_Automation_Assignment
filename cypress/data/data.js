@@ -1,5 +1,5 @@
 class data {
-    demoblaze_url = "http://localhost:3000/"
+    transmedia_url = "http://localhost:3000/"
 
     // Time wait 
     oneSecond = 1000;

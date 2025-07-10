@@ -23,7 +23,6 @@ async function setupNodeEvents(on, config) {
 module.exports = defineConfig({
   e2e: {
     setupNodeEvents,
-    // specPattern: "cypress/e2e/features/register.feature",
     specPattern: "cypress/e2e/features/**/*.feature",
     chromeWebSecurity: false,
     env: {

@@ -1,58 +1,80 @@
-import {Given,When,Then,} from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then, } from "@badeball/cypress-cucumber-preprocessor";
 import locatorsPage from "../../Locators/locators";
 import allData from '../../data/data'
 const locator = new locatorsPage();
 const data = new allData();
-const boardName = "Board_" + Date.now();
-let createdBoardName = '';
+
 const listNames = ["To Do", "In Progress"];
 
-Given("User open demoblaze website", () => {
-    cy.visit(data.demoblaze_url);
+Given("User open transmedia website", () => {
+    cy.visit(data.transmedia_url);
     cy.viewport(1280, 720)
 });
 
-Then("Click on the board", ()=> {
+Then("Click on the board", () => {
     cy.xpath(locator.boardCard).click()
 })
 
-Then("Input a board name and press enter", ()=> {
+Then("Input a board name and press enter", () => {
     const baseName = "Board_";
     cy.xpath(locator.boardInput)
-    .type(`${baseName}{enter}`);
+        .type(`${baseName}{enter}`);
 })
 
-Then("Verify board created successfully", ()=> {
-    cy.get('.board-title')  // adjust this selector
-    .should('be.visible')
-})
-Then("Add two lists to the board", ()=> {
-   listNames.forEach((name) => {
-    cy.xpath(locator.addListButton).click(); // Replace with real selector
-    cy.get('[data-testid="list-name-input"]').type(name);
-    cy.get('[data-testid="save-list-button"]').click();
-  });
-})
-Then("Click on the sign up btn", ()=> {
-   cy.xpath(locator.signupButton).click()
-   cy.wait(data.oneSecond)
-})
-Then("Click on the login tab", ()=> {
-   cy.xpath(locator.loginTab).click()
-   cy.wait(data.oneSecond)
+Then("Verify board created successfully", () => {
+    cy.get('.board-title')
+        .should('be.visible')
 })
 
-Then("Enter the username", ()=> {
-    cy.xpath(locator.loginUsernmae).click()
-    cy.xpath(locator.loginUsernmae).type("momtazrasel")
+Then("Goto the created board", () => {
+    cy.xpath(locator.createdBoard).click()
     cy.wait(data.oneSecond)
 })
-Then("Enter the password", ()=> {
-    cy.xpath(locator.loginPassword).click()
-    cy.xpath(locator.loginPassword).type("Test123##")
-    cy.wait(data.oneSecond)
+
+Then("Add two lists to the board", () => {
+
+    listNames.forEach((name, index) => {
+        if (index === 0) {
+            cy.xpath(locator.addListButton).should('be.visible').click();
+            cy.wait(1000);
+        } else {
+            cy.xpath(locator.addListButton2).should('be.visible').click();
+        }
+
+        cy.xpath(locator.listInput)
+            .should('be.visible')
+            .type(`${name}{enter}`);
+
+        cy.wait(1000);
+    });
+
+
 })
-Then("Click on the login button", ()=> {
-    cy.xpath(locator.loginButton).click()
-    cy.wait(data.oneSecond)
+
+
+Then("Verify two lists are successfully created", () => {
+    cy.xpath(locator.listCard, { timeout: 10000 })
+        .should('have.length', 2)
+        .each(($el) => {
+            cy.wrap($el).should('be.visible');
+        });
+
+})
+
+Then("Delete the created list", () => {
+    cy.xpath(locator.threeDotButton)
+        .should("be.visible")
+        .click();
+
+    cy.xpath(locator.deleteList)
+        .should("be.visible")
+        .click();
+
+    cy.xpath(locator.threeDotButtonBoard)
+        .should("be.visible")
+        .click();
+
+    cy.xpath(locator.deleteBoard)
+        .should("be.visible")
+        .click();
 })
